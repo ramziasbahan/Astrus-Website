@@ -62,11 +62,11 @@ const scrollToSection = (id) => {
 function GlobalStyles() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
       :root {
-        --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        --font-display: 'Playfair Display', Georgia, serif;
+        --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       }
 
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -296,7 +296,7 @@ function SectionHeading({ eyebrow, title, description }) {
       )}
       <h2 className="section-heading-title" style={{
         fontFamily: 'var(--font-display)', fontSize: 36, lineHeight: 1.15,
-        color: BRAND.ink, marginBottom: description ? 14 : 0,
+        color: BRAND.ink, marginBottom: description ? 14 : 0, fontWeight: 800, letterSpacing: '-0.02em',
       }}>{title}</h2>
       {description && (
         <p style={{ fontSize: 16, lineHeight: 1.75, color: BRAND.navy, margin: 0 }}>{description}</p>
@@ -542,7 +542,7 @@ function RequestForm({ selectedType, onToast }) {
     <>
       <div className="card" style={{ boxShadow: '0 20px 56px rgba(86,100,151,0.1)' }}>
         <div style={{ padding: '32px 28px' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: BRAND.ink }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, color: BRAND.ink }}>
             Request a quotation
           </div>
           <p style={{ fontSize: 15, lineHeight: 1.7, color: BRAND.navy, marginTop: 8, marginBottom: 8 }}>
@@ -937,7 +937,7 @@ function RequestForm({ selectedType, onToast }) {
           }}>
             <Send size={24} style={{ color: BRAND.navy }} />
           </div>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: BRAND.ink, marginBottom: 10 }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800, color: BRAND.ink, marginBottom: 10 }}>
             Ready to send?
           </h3>
           <p style={{ fontSize: 14, color: BRAND.navy, lineHeight: 1.7, marginBottom: 24 }}>
@@ -1053,7 +1053,19 @@ export default function App() {
         <section style={{
           background: 'linear-gradient(180deg, ' + BRAND.soft + ' 0%, #fff 70%)',
           borderBottom: '1px solid ' + BRAND.border,
+          position: 'relative', overflow: 'hidden',
         }}>
+          {/* Background decorative elements */}
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+            <svg style={{ position: 'absolute', top: -80, right: -120, width: 500, height: 500, opacity: 0.04 }} viewBox="0 0 500 500"><circle cx="250" cy="250" r="250" fill={BRAND.ink} /></svg>
+            <svg style={{ position: 'absolute', bottom: -60, left: -80, width: 400, height: 400, opacity: 0.03 }} viewBox="0 0 400 400"><circle cx="200" cy="200" r="200" fill={BRAND.navy} /></svg>
+            <svg style={{ position: 'absolute', top: 60, right: '15%', width: 200, height: 200, opacity: 0.05 }} viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" rx="30" fill="none" stroke={BRAND.lavender} strokeWidth="2" transform="rotate(15 100 100)" /></svg>
+            <svg style={{ position: 'absolute', bottom: 40, left: '10%', width: 150, height: 150, opacity: 0.04 }} viewBox="0 0 150 150"><polygon points="75,5 145,115 5,115" fill="none" stroke={BRAND.navy} strokeWidth="1.5" /></svg>
+            <div style={{ position: 'absolute', top: '20%', left: '5%', width: 6, height: 6, borderRadius: '50%', background: BRAND.lavender, opacity: 0.15 }} />
+            <div style={{ position: 'absolute', top: '40%', right: '8%', width: 8, height: 8, borderRadius: '50%', background: BRAND.navy, opacity: 0.1 }} />
+            <div style={{ position: 'absolute', bottom: '25%', left: '20%', width: 4, height: 4, borderRadius: '50%', background: BRAND.lavender, opacity: 0.2 }} />
+            <div style={{ position: 'absolute', top: '15%', right: '30%', width: 5, height: 5, borderRadius: '50%', background: BRAND.navy, opacity: 0.12 }} />
+          </div>
           <div className="section-container" style={{
             padding: '72px 24px 80px',
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -1072,7 +1084,7 @@ export default function App() {
 
               <h1 className="hero-title" style={{
                 fontFamily: 'var(--font-display)', fontSize: 52, lineHeight: 1.08,
-                color: BRAND.ink, margin: '22px 0 16px', letterSpacing: '-0.01em',
+                color: BRAND.ink, margin: '22px 0 16px', letterSpacing: '-0.02em', fontWeight: 800,
               }}>
                 Insurance made clear, dependable, and refreshingly human.
               </h1>
@@ -1135,7 +1147,7 @@ export default function App() {
                   <CheckCircle2 size={15} /> Why clients choose Astrus
                 </div>
 
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 26, margin: '18px 0 12px', lineHeight: 1.2 }}>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 800, margin: '18px 0 12px', lineHeight: 1.2 }}>
                   Confident decisions start with clear advice.
                 </h3>
                 <p style={{ fontSize: 15, lineHeight: 1.8, opacity: 0.88 }}>
@@ -1161,7 +1173,10 @@ export default function App() {
         </section>
 
         {/* ── SOLUTIONS ─────────────────────────── */}
-        <section id="solutions" style={{ paddingTop: 72, paddingBottom: 48 }}>
+        <section id="solutions" style={{ paddingTop: 72, paddingBottom: 48, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <svg style={{ position: 'absolute', top: 20, right: -60, width: 200, height: 200, opacity: 0.03 }} viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" rx="30" fill="none" stroke={BRAND.ink} strokeWidth="1.5" transform="rotate(-8 100 100)" /></svg>
+          </div>
           <div className="section-container">
             <SectionHeading
               eyebrow="Solutions"
@@ -1194,7 +1209,11 @@ export default function App() {
         </section>
 
         {/* ── WHY US ─────────────────────────────── */}
-        <section id="why-us" style={{ paddingTop: 72, paddingBottom: 48 }}>
+        <section id="why-us" style={{ paddingTop: 72, paddingBottom: 48, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <svg style={{ position: 'absolute', top: -40, left: -60, width: 300, height: 300, opacity: 0.03 }} viewBox="0 0 300 300"><circle cx="150" cy="150" r="150" fill={BRAND.navy} /></svg>
+            <svg style={{ position: 'absolute', bottom: -30, right: -40, width: 250, height: 250, opacity: 0.04 }} viewBox="0 0 250 250"><rect x="25" y="25" width="200" height="200" rx="40" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" transform="rotate(-10 125 125)" /></svg>
+          </div>
           <div className="section-container">
             <SectionHeading eyebrow="Why Astrus" title="A brokerage that earns your trust" />
             <div style={{
@@ -1229,7 +1248,13 @@ export default function App() {
           background: BRAND.soft,
           borderTop: '1px solid ' + BRAND.border,
           borderBottom: '1px solid ' + BRAND.border,
+          position: 'relative', overflow: 'hidden',
         }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <svg style={{ position: 'absolute', top: -100, right: -100, width: 450, height: 450, opacity: 0.03 }} viewBox="0 0 450 450"><circle cx="225" cy="225" r="225" fill={BRAND.ink} /></svg>
+            <svg style={{ position: 'absolute', bottom: -50, left: -70, width: 350, height: 350, opacity: 0.025 }} viewBox="0 0 350 350"><rect x="30" y="30" width="290" height="290" rx="50" fill="none" stroke={BRAND.navy} strokeWidth="2" transform="rotate(20 175 175)" /></svg>
+            <svg style={{ position: 'absolute', top: '30%', left: '5%', width: 120, height: 120, opacity: 0.04 }} viewBox="0 0 120 120"><polygon points="60,5 115,95 5,95" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" /></svg>
+          </div>
           <div className="section-container" style={{ padding: '72px 24px' }}>
             <div style={{ marginBottom: 32 }}>
               <SectionHeading
@@ -1283,7 +1308,7 @@ export default function App() {
           }}>
             <Mail size={24} style={{ color: BRAND.navy }} />
           </div>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: BRAND.ink, marginBottom: 10 }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800, color: BRAND.ink, marginBottom: 10 }}>
             Get in touch
           </h3>
           <p style={{ fontSize: 14, color: BRAND.navy, lineHeight: 1.7, marginBottom: 24 }}>
