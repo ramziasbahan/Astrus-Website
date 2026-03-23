@@ -18,6 +18,10 @@ import {
   X,
   AlertCircle,
   ArrowUp,
+  Ship,
+  Plus,
+  Trash2,
+  Upload,
 } from 'lucide-react';
 
 /* ── Brand tokens ─────────────────────────────────────── */
@@ -41,6 +45,7 @@ const insuranceTypes = [
   { value: 'motor', label: 'Motor Insurance', icon: Car, desc: 'Cars, trucks, fleets' },
   { value: 'medical', label: 'Medical Insurance', icon: HeartPulse, desc: 'Health & group cover' },
   { value: 'property', label: 'Property Insurance', icon: Building2, desc: 'Homes, offices, shops' },
+  { value: 'shipping', label: 'Shipping Insurance', icon: Ship, desc: 'Land, air, sea cargo' },
   { value: 'workmen', label: 'Workmen Insurance', icon: HardHat, desc: 'Construction & labor' },
   { value: 'other', label: 'Other Requests', icon: FileText, desc: 'Any insurance need' },
 ];
@@ -385,8 +390,9 @@ function RequestForm({ selectedType, onToast }) {
     fullName: '', companyName: '', phone: '', email: '',
     type: selectedType, notes: '',
     vehicleMakeModel: '', year: '', estimatedValue: '', usage: '',
-    employeesCount: '', familyCoverage: '', hospitalNetwork: '',
-    propertyType: '', location: '', buildArea: '', contentsIncluded: '',
+    medicalUserType: '', medicalClass: '', employeesCount: '', familyCoverage: '',
+    propertyType: '', location: '', buildArea: '', contentsIncluded: '', propertyValue: '', contentsValue: '',
+    shippingSubtype: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [''], destinationCountry: '',
     plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
     contractValue: '', projectDuration: '',
     otherNeed: '',
@@ -394,6 +400,7 @@ function RequestForm({ selectedType, onToast }) {
 
   const [errors, setErrors] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, type: selectedType }));
@@ -414,10 +421,20 @@ function RequestForm({ selectedType, onToast }) {
       if (!form.vehicleMakeModel.trim()) e.vehicleMakeModel = 'Required';
       if (!form.year.trim()) e.year = 'Required';
     }
-    if (form.type === 'medical' && !form.employeesCount.trim()) e.employeesCount = 'Required';
+    if (form.type === 'medical') {
+      if (!form.medicalUserType) e.medicalUserType = 'Required';
+      if (!form.medicalClass) e.medicalClass = 'Required';
+    }
     if (form.type === 'property') {
       if (!form.propertyType.trim()) e.propertyType = 'Required';
       if (!form.location.trim()) e.location = 'Required';
+      if (!form.propertyValue.trim()) e.propertyValue = 'Required';
+    }
+    if (form.type === 'shipping') {
+      if (!form.shippingSubtype) e.shippingSubtype = 'Required';
+      if (!form.invoiceValue.trim()) e.invoiceValue = 'Required';
+      if (!form.originCountry.trim()) e.originCountry = 'Required';
+      if (!form.destinationCountry.trim()) e.destinationCountry = 'Required';
     }
     if (form.type === 'workmen') {
       if (!form.projectType.trim()) e.projectType = 'Required';
@@ -451,14 +468,26 @@ function RequestForm({ selectedType, onToast }) {
       if (form.usage) lines.push('Usage: ' + form.usage);
     }
     if (form.type === 'medical') {
-      lines.push('Employees/Members: ' + form.employeesCount);
+      if (form.medicalUserType) lines.push('User Type: ' + form.medicalUserType);
+      if (form.medicalClass) lines.push('Class: ' + form.medicalClass);
+      if (form.employeesCount) lines.push('Employees/Members: ' + form.employeesCount);
       if (form.familyCoverage) lines.push('Family Coverage: ' + form.familyCoverage);
-      if (form.hospitalNetwork) lines.push('Network: ' + form.hospitalNetwork);
     }
     if (form.type === 'property') {
       lines.push('Property Type: ' + form.propertyType, 'Location: ' + form.location);
       if (form.buildArea) lines.push('Built Area: ' + form.buildArea + ' sqm');
-      if (form.contentsIncluded) lines.push('Contents: ' + form.contentsIncluded);
+      lines.push('Property Value (USD): ' + form.propertyValue);
+      if (form.contentsIncluded) lines.push('Contents Included: ' + form.contentsIncluded);
+      if (form.contentsIncluded === 'yes' && form.contentsValue) lines.push('Contents Value (USD): ' + form.contentsValue);
+    }
+    if (form.type === 'shipping') {
+      lines.push('Shipping Type: ' + form.shippingSubtype);
+      lines.push('Invoice Value: ' + form.invoiceValue + ' ' + form.invoiceCurrency);
+      lines.push('Origin Country: ' + form.originCountry);
+      var transitList = form.transitCountries.filter(function(c) { return c.trim(); }).join(', ');
+      if (transitList) lines.push('Transit Countries: ' + transitList);
+      lines.push('Destination Country: ' + form.destinationCountry);
+      if (uploadedFiles.length > 0) lines.push('Attachments: ' + uploadedFiles.length + ' file(s) — please request via email');
     }
     if (form.type === 'workmen') {
       lines.push('Project Type: ' + form.projectType);
@@ -554,23 +583,32 @@ function RequestForm({ selectedType, onToast }) {
 
           {form.type === 'medical' && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...gridStyle, marginTop: 18, overflow: 'hidden' }}>
-              <FormField label="Employees / members *" error={errors.employeesCount}>
-                <input className={errors.employeesCount ? 'error-field' : ''} value={form.employeesCount} onChange={(e) => onChange('employeesCount', e.target.value)} placeholder="e.g. 25" />
+              <FormField label="User type *" error={errors.medicalUserType}>
+                <select className={errors.medicalUserType ? 'error-field' : ''} value={form.medicalUserType} onChange={(e) => onChange('medicalUserType', e.target.value)}>
+                  <option value="">Select</option>
+                  <option value="Company">Company</option>
+                  <option value="Personal">Personal</option>
+                </select>
               </FormField>
+              <FormField label="Insurance class *" error={errors.medicalClass}>
+                <select className={errors.medicalClass ? 'error-field' : ''} value={form.medicalClass} onChange={(e) => onChange('medicalClass', e.target.value)}>
+                  <option value="">Select class</option>
+                  <option value="Class A">Class A</option>
+                  <option value="Class B">Class B</option>
+                  <option value="SK">SK</option>
+                </select>
+              </FormField>
+              {form.medicalUserType === 'Company' && (
+                <FormField label="Number of employees">
+                  <input value={form.employeesCount} onChange={(e) => onChange('employeesCount', e.target.value)} placeholder="e.g. 25" />
+                </FormField>
+              )}
               <FormField label="Family coverage?">
                 <select value={form.familyCoverage} onChange={(e) => onChange('familyCoverage', e.target.value)}>
                   <option value="">Select</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                   <option value="optional">Optional / Mixed</option>
-                </select>
-              </FormField>
-              <FormField label="Hospital network">
-                <select value={form.hospitalNetwork} onChange={(e) => onChange('hospitalNetwork', e.target.value)}>
-                  <option value="">Select network</option>
-                  <option value="full">Full Network</option>
-                  <option value="advanced">Advanced Network</option>
-                  <option value="limited">Limited Network</option>
                 </select>
               </FormField>
             </motion.div>
@@ -587,6 +625,9 @@ function RequestForm({ selectedType, onToast }) {
               <FormField label="Built area (sqm)">
                 <input value={form.buildArea} onChange={(e) => onChange('buildArea', e.target.value)} placeholder="e.g. 180" />
               </FormField>
+              <FormField label="Property value (USD) *" error={errors.propertyValue}>
+                <input className={errors.propertyValue ? 'error-field' : ''} value={form.propertyValue} onChange={(e) => onChange('propertyValue', e.target.value)} placeholder="e.g. 250,000" />
+              </FormField>
               <FormField label="Contents included?">
                 <select value={form.contentsIncluded} onChange={(e) => onChange('contentsIncluded', e.target.value)}>
                   <option value="">Select</option>
@@ -594,6 +635,115 @@ function RequestForm({ selectedType, onToast }) {
                   <option value="no">No</option>
                 </select>
               </FormField>
+              {form.contentsIncluded === 'yes' && (
+                <FormField label="Contents value (USD)">
+                  <input value={form.contentsValue} onChange={(e) => onChange('contentsValue', e.target.value)} placeholder="e.g. 50,000" />
+                </FormField>
+              )}
+            </motion.div>
+          )}
+
+          {form.type === 'shipping' && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: 18, overflow: 'hidden' }}>
+              <div style={gridStyle}>
+                <FormField label="Shipping type *" error={errors.shippingSubtype}>
+                  <select className={errors.shippingSubtype ? 'error-field' : ''} value={form.shippingSubtype} onChange={(e) => onChange('shippingSubtype', e.target.value)}>
+                    <option value="">Select type</option>
+                    <option value="Land">Land</option>
+                    <option value="Air">Air</option>
+                    <option value="Sea">Sea</option>
+                  </select>
+                </FormField>
+                <FormField label="Invoice value *" error={errors.invoiceValue}>
+                  <input className={errors.invoiceValue ? 'error-field' : ''} value={form.invoiceValue} onChange={(e) => onChange('invoiceValue', e.target.value)} placeholder="e.g. 50,000" />
+                </FormField>
+                <FormField label="Currency">
+                  <select value={form.invoiceCurrency} onChange={(e) => onChange('invoiceCurrency', e.target.value)}>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                </FormField>
+                <FormField label="Origin country *" error={errors.originCountry}>
+                  <input className={errors.originCountry ? 'error-field' : ''} value={form.originCountry} onChange={(e) => onChange('originCountry', e.target.value)} placeholder="Country of origin" />
+                </FormField>
+                <FormField label="Destination country *" error={errors.destinationCountry}>
+                  <input className={errors.destinationCountry ? 'error-field' : ''} value={form.destinationCountry} onChange={(e) => onChange('destinationCountry', e.target.value)} placeholder="Final destination" />
+                </FormField>
+              </div>
+
+              <div style={{ marginTop: 14 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>Transit countries</label>
+                {form.transitCountries.map((tc, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                    <input
+                      value={tc}
+                      onChange={(e) => {
+                        const updated = [...form.transitCountries];
+                        updated[idx] = e.target.value;
+                        setForm((prev) => ({ ...prev, transitCountries: updated }));
+                      }}
+                      placeholder={'Transit country ' + (idx + 1)}
+                      style={{ flex: 1 }}
+                    />
+                    {form.transitCountries.length > 1 && (
+                      <button type="button" onClick={() => {
+                        const updated = form.transitCountries.filter((_, i) => i !== idx);
+                        setForm((prev) => ({ ...prev, transitCountries: updated }));
+                      }} style={{
+                        width: 36, height: 36, borderRadius: 8, border: '1px solid ' + BRAND.border,
+                        background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: BRAND.error, flexShrink: 0,
+                      }}>
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button type="button" onClick={() => {
+                  setForm((prev) => ({ ...prev, transitCountries: [...prev.transitCountries, ''] }));
+                }} className="btn-outline" style={{ fontSize: 12, minHeight: 34, padding: '0 14px', marginTop: 4 }}>
+                  <Plus size={14} /> Add transit country
+                </button>
+              </div>
+
+              <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
+                <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
+                <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload invoices & supporting documents</div>
+                <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 12 }}>PDF, JPG, PNG — max 10MB per file</div>
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  id="file-upload"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files);
+                    setUploadedFiles((prev) => [...prev, ...files]);
+                    e.target.value = '';
+                  }}
+                />
+                <label htmlFor="file-upload" className="btn-outline" style={{ cursor: 'pointer', fontSize: 12, minHeight: 36, padding: '0 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <Upload size={14} /> Choose files
+                </label>
+                {uploadedFiles.length > 0 && (
+                  <div style={{ marginTop: 12, textAlign: 'left' }}>
+                    {uploadedFiles.map((file, idx) => (
+                      <div key={idx} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '8px 12px', marginBottom: 4, borderRadius: 8,
+                        background: '#fff', border: '1px solid ' + BRAND.border, fontSize: 13,
+                      }}>
+                        <span style={{ color: BRAND.ink }}>{file.name}</span>
+                        <button type="button" onClick={() => {
+                          setUploadedFiles((prev) => prev.filter((_, i) => i !== idx));
+                        }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: BRAND.error, padding: 0 }}>
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
 
