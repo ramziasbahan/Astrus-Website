@@ -26,6 +26,7 @@ import {
   MapPin,
   MessageCircle,
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 /* ── Brand tokens ─────────────────────────────────────── */
 const BRAND = {
@@ -385,7 +386,7 @@ function FormField({ label, error, children }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ════��═════════════════��════════════════════════════════
    REQUEST FORM
    ═══════════════════════════════════════════════════════ */
 function RequestForm({ selectedType, onToast }) {
@@ -1388,6 +1389,7 @@ export default function App() {
       >
         <ArrowUp size={20} />
       </button>
+      <Analytics />
     </div>
   );
 }
