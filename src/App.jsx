@@ -22,6 +22,9 @@ import {
   Plus,
   Trash2,
   Upload,
+  Phone,
+  MapPin,
+  MessageCircle,
 } from 'lucide-react';
 
 /* ── Brand tokens ─────────────────────────────────────── */
@@ -1057,14 +1060,18 @@ export default function App() {
         }}>
           {/* Background decorative elements */}
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-            <svg style={{ position: 'absolute', top: -80, right: -120, width: 500, height: 500, opacity: 0.04 }} viewBox="0 0 500 500"><circle cx="250" cy="250" r="250" fill={BRAND.ink} /></svg>
-            <svg style={{ position: 'absolute', bottom: -60, left: -80, width: 400, height: 400, opacity: 0.03 }} viewBox="0 0 400 400"><circle cx="200" cy="200" r="200" fill={BRAND.navy} /></svg>
-            <svg style={{ position: 'absolute', top: 60, right: '15%', width: 200, height: 200, opacity: 0.05 }} viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" rx="30" fill="none" stroke={BRAND.lavender} strokeWidth="2" transform="rotate(15 100 100)" /></svg>
-            <svg style={{ position: 'absolute', bottom: 40, left: '10%', width: 150, height: 150, opacity: 0.04 }} viewBox="0 0 150 150"><polygon points="75,5 145,115 5,115" fill="none" stroke={BRAND.navy} strokeWidth="1.5" /></svg>
-            <div style={{ position: 'absolute', top: '20%', left: '5%', width: 6, height: 6, borderRadius: '50%', background: BRAND.lavender, opacity: 0.15 }} />
-            <div style={{ position: 'absolute', top: '40%', right: '8%', width: 8, height: 8, borderRadius: '50%', background: BRAND.navy, opacity: 0.1 }} />
-            <div style={{ position: 'absolute', bottom: '25%', left: '20%', width: 4, height: 4, borderRadius: '50%', background: BRAND.lavender, opacity: 0.2 }} />
-            <div style={{ position: 'absolute', top: '15%', right: '30%', width: 5, height: 5, borderRadius: '50%', background: BRAND.navy, opacity: 0.12 }} />
+            <svg style={{ position: 'absolute', top: -80, right: -120, width: 550, height: 550, opacity: 0.06 }} viewBox="0 0 550 550"><circle cx="275" cy="275" r="275" fill={BRAND.ink} /></svg>
+            <svg style={{ position: 'absolute', bottom: -60, left: -80, width: 450, height: 450, opacity: 0.05 }} viewBox="0 0 450 450"><circle cx="225" cy="225" r="225" fill={BRAND.navy} /></svg>
+            <svg style={{ position: 'absolute', top: 40, right: '12%', width: 240, height: 240, opacity: 0.07 }} viewBox="0 0 240 240"><rect x="20" y="20" width="200" height="200" rx="35" fill="none" stroke={BRAND.lavender} strokeWidth="2.5" transform="rotate(15 120 120)" /></svg>
+            <svg style={{ position: 'absolute', bottom: 60, left: '8%', width: 180, height: 180, opacity: 0.06 }} viewBox="0 0 180 180"><polygon points="90,10 170,140 10,140" fill="none" stroke={BRAND.navy} strokeWidth="2" /></svg>
+            <svg style={{ position: 'absolute', top: '50%', left: '45%', width: 100, height: 100, opacity: 0.05 }} viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="15" fill="none" stroke={BRAND.ink} strokeWidth="1.5" transform="rotate(30 50 50)" /></svg>
+            <svg style={{ position: 'absolute', top: '20%', left: '2%', width: 160, height: 160, opacity: 0.04 }} viewBox="0 0 160 160"><circle cx="80" cy="80" r="60" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" /></svg>
+            <div style={{ position: 'absolute', top: '18%', left: '6%', width: 10, height: 10, borderRadius: '50%', background: BRAND.lavender, opacity: 0.2 }} />
+            <div style={{ position: 'absolute', top: '35%', right: '6%', width: 12, height: 12, borderRadius: '50%', background: BRAND.navy, opacity: 0.15 }} />
+            <div style={{ position: 'absolute', bottom: '20%', left: '22%', width: 8, height: 8, borderRadius: '50%', background: BRAND.lavender, opacity: 0.25 }} />
+            <div style={{ position: 'absolute', top: '12%', right: '25%', width: 6, height: 6, borderRadius: '50%', background: BRAND.navy, opacity: 0.18 }} />
+            <div style={{ position: 'absolute', bottom: '40%', right: '15%', width: 14, height: 14, borderRadius: '50%', background: BRAND.lavender, opacity: 0.12 }} />
+            <div style={{ position: 'absolute', top: '65%', left: '35%', width: 7, height: 7, borderRadius: '50%', background: BRAND.ink, opacity: 0.1 }} />
           </div>
           <div className="section-container" style={{
             padding: '72px 24px 80px',
@@ -1175,7 +1182,9 @@ export default function App() {
         {/* ── SOLUTIONS ─────────────────────────── */}
         <section id="solutions" style={{ paddingTop: 72, paddingBottom: 48, position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <svg style={{ position: 'absolute', top: 20, right: -60, width: 200, height: 200, opacity: 0.03 }} viewBox="0 0 200 200"><rect x="20" y="20" width="160" height="160" rx="30" fill="none" stroke={BRAND.ink} strokeWidth="1.5" transform="rotate(-8 100 100)" /></svg>
+            <svg style={{ position: 'absolute', top: 20, right: -60, width: 250, height: 250, opacity: 0.06 }} viewBox="0 0 250 250"><rect x="20" y="20" width="210" height="210" rx="40" fill="none" stroke={BRAND.ink} strokeWidth="2" transform="rotate(-8 125 125)" /></svg>
+            <svg style={{ position: 'absolute', bottom: -20, left: -40, width: 180, height: 180, opacity: 0.05 }} viewBox="0 0 180 180"><circle cx="90" cy="90" r="80" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" /></svg>
+            <div style={{ position: 'absolute', top: '30%', right: '20%', width: 10, height: 10, borderRadius: '50%', background: BRAND.navy, opacity: 0.12 }} />
           </div>
           <div className="section-container">
             <SectionHeading
@@ -1211,8 +1220,10 @@ export default function App() {
         {/* ── WHY US ─────────────────────────────── */}
         <section id="why-us" style={{ paddingTop: 72, paddingBottom: 48, position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <svg style={{ position: 'absolute', top: -40, left: -60, width: 300, height: 300, opacity: 0.03 }} viewBox="0 0 300 300"><circle cx="150" cy="150" r="150" fill={BRAND.navy} /></svg>
-            <svg style={{ position: 'absolute', bottom: -30, right: -40, width: 250, height: 250, opacity: 0.04 }} viewBox="0 0 250 250"><rect x="25" y="25" width="200" height="200" rx="40" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" transform="rotate(-10 125 125)" /></svg>
+            <svg style={{ position: 'absolute', top: -40, left: -60, width: 350, height: 350, opacity: 0.05 }} viewBox="0 0 350 350"><circle cx="175" cy="175" r="175" fill={BRAND.navy} /></svg>
+            <svg style={{ position: 'absolute', bottom: -30, right: -40, width: 280, height: 280, opacity: 0.06 }} viewBox="0 0 280 280"><rect x="30" y="30" width="220" height="220" rx="45" fill="none" stroke={BRAND.lavender} strokeWidth="2" transform="rotate(-10 140 140)" /></svg>
+            <svg style={{ position: 'absolute', top: '40%', right: '10%', width: 120, height: 120, opacity: 0.05 }} viewBox="0 0 120 120"><polygon points="60,8 112,92 8,92" fill="none" stroke={BRAND.ink} strokeWidth="1.5" /></svg>
+            <div style={{ position: 'absolute', bottom: '30%', left: '15%', width: 9, height: 9, borderRadius: '50%', background: BRAND.lavender, opacity: 0.18 }} />
           </div>
           <div className="section-container">
             <SectionHeading eyebrow="Why Astrus" title="A brokerage that earns your trust" />
@@ -1251,9 +1262,12 @@ export default function App() {
           position: 'relative', overflow: 'hidden',
         }}>
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <svg style={{ position: 'absolute', top: -100, right: -100, width: 450, height: 450, opacity: 0.03 }} viewBox="0 0 450 450"><circle cx="225" cy="225" r="225" fill={BRAND.ink} /></svg>
-            <svg style={{ position: 'absolute', bottom: -50, left: -70, width: 350, height: 350, opacity: 0.025 }} viewBox="0 0 350 350"><rect x="30" y="30" width="290" height="290" rx="50" fill="none" stroke={BRAND.navy} strokeWidth="2" transform="rotate(20 175 175)" /></svg>
-            <svg style={{ position: 'absolute', top: '30%', left: '5%', width: 120, height: 120, opacity: 0.04 }} viewBox="0 0 120 120"><polygon points="60,5 115,95 5,95" fill="none" stroke={BRAND.lavender} strokeWidth="1.5" /></svg>
+            <svg style={{ position: 'absolute', top: -100, right: -100, width: 500, height: 500, opacity: 0.05 }} viewBox="0 0 500 500"><circle cx="250" cy="250" r="250" fill={BRAND.ink} /></svg>
+            <svg style={{ position: 'absolute', bottom: -50, left: -70, width: 400, height: 400, opacity: 0.04 }} viewBox="0 0 400 400"><rect x="30" y="30" width="340" height="340" rx="60" fill="none" stroke={BRAND.navy} strokeWidth="2.5" transform="rotate(20 200 200)" /></svg>
+            <svg style={{ position: 'absolute', top: '30%', left: '3%', width: 150, height: 150, opacity: 0.06 }} viewBox="0 0 150 150"><polygon points="75,8 142,112 8,112" fill="none" stroke={BRAND.lavender} strokeWidth="2" /></svg>
+            <svg style={{ position: 'absolute', bottom: '20%', right: '5%', width: 100, height: 100, opacity: 0.04 }} viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke={BRAND.ink} strokeWidth="1.5" /></svg>
+            <div style={{ position: 'absolute', top: '15%', left: '12%', width: 11, height: 11, borderRadius: '50%', background: BRAND.navy, opacity: 0.15 }} />
+            <div style={{ position: 'absolute', bottom: '35%', right: '18%', width: 8, height: 8, borderRadius: '50%', background: BRAND.lavender, opacity: 0.2 }} />
           </div>
           <div className="section-container" style={{ padding: '72px 24px' }}>
             <div style={{ marginBottom: 32 }}>
@@ -1268,25 +1282,74 @@ export default function App() {
         </section>
 
         {/* ── FOOTER ──────────────────────────── */}
-        <section id="contact">
+        <section id="contact" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <svg style={{ position: 'absolute', top: -60, right: -80, width: 350, height: 350, opacity: 0.03 }} viewBox="0 0 350 350"><circle cx="175" cy="175" r="175" fill={BRAND.ink} /></svg>
+          </div>
           <div className="section-container" style={{
             padding: '56px 24px',
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32, alignItems: 'start',
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 28, alignItems: 'start',
           }}>
+            {/* Column 1: Logo + description */}
             <div>
               <LogoBlock />
-              <p style={{ maxWidth: 500, fontSize: 15, lineHeight: 1.75, color: BRAND.navy, marginTop: 16 }}>
+              <p style={{ maxWidth: 400, fontSize: 14, lineHeight: 1.75, color: BRAND.navy, marginTop: 16 }}>
                 Astrus Insurance Services provides clear, dependable insurance guidance for individuals, families, and businesses seeking protection they can trust.
               </p>
             </div>
 
-            <div className="card" style={{ padding: 22, background: BRAND.soft }}>
-              <div style={{ fontWeight: 700, color: BRAND.ink, marginBottom: 8 }}>Send us an email</div>
-              <p style={{ fontSize: 14, lineHeight: 1.7, color: BRAND.navy, margin: '0 0 14px' }}>
-                Click below and your email app will open a pre-addressed message to our team.
-              </p>
-              <a href={'mailto:' + COMPANY_EMAIL + '?subject=' + encodeURIComponent('Astrus Insurance Enquiry')} className="btn-primary" style={{ fontSize: 13 }}>
-                <Send size={14} /> {COMPANY_EMAIL}
+            {/* Column 2: Contact details */}
+            <div className="card" style={{ padding: 24 }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: BRAND.ink, marginBottom: 16 }}>Contact us</div>
+
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 14 }}>
+                <MapPin size={16} style={{ color: BRAND.navy, marginTop: 2, flexShrink: 0 }} />
+                <div style={{ fontSize: 14, color: BRAND.navy, lineHeight: 1.6 }}>
+                  Abi Chaker Building, 4th Floor<br />
+                  Zouk Mosbeh, Facing Espace 2000<br />
+                  Lebanon
+                </div>
+              </div>
+
+              <a href="tel:+9619211011" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, fontSize: 14, color: BRAND.navy }}>
+                <Phone size={16} style={{ flexShrink: 0 }} />
+                +961 9 211 011
+              </a>
+
+              <a href={'mailto:' + COMPANY_EMAIL} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, fontSize: 14, color: BRAND.navy }}>
+                <Mail size={16} style={{ flexShrink: 0 }} />
+                {COMPANY_EMAIL}
+              </a>
+
+              <a href="https://wa.me/9613252879" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#25D366' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp us
+              </a>
+            </div>
+
+            {/* Column 3: Quick actions */}
+            <div style={{ display: 'grid', gap: 12 }}>
+              <div className="card" style={{ padding: 20, background: BRAND.soft }}>
+                <div style={{ fontWeight: 700, color: BRAND.ink, marginBottom: 8 }}>Send us an email</div>
+                <p style={{ fontSize: 13, lineHeight: 1.7, color: BRAND.navy, margin: '0 0 12px' }}>
+                  Click below and your email app will open a pre-addressed message.
+                </p>
+                <a href={'mailto:' + COMPANY_EMAIL + '?subject=' + encodeURIComponent('Astrus Insurance Enquiry')} className="btn-primary" style={{ fontSize: 13 }}>
+                  <Send size={14} /> {COMPANY_EMAIL}
+                </a>
+              </div>
+
+              <a href="https://wa.me/9613252879" target="_blank" rel="noopener noreferrer" className="card card-lift" style={{ padding: 20, display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', textDecoration: 'none' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                  background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: BRAND.ink }}>Chat on WhatsApp</div>
+                  <div style={{ fontSize: 13, color: BRAND.navy }}>Quick response on mobile or web</div>
+                </div>
               </a>
             </div>
           </div>
@@ -1308,18 +1371,38 @@ export default function App() {
           }}>
             <Mail size={24} style={{ color: BRAND.navy }} />
           </div>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800, color: BRAND.ink, marginBottom: 10 }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800, color: BRAND.ink, marginBottom: 6 }}>
             Get in touch
           </h3>
-          <p style={{ fontSize: 14, color: BRAND.navy, lineHeight: 1.7, marginBottom: 24 }}>
-            Send us an email and our team will get back to you promptly with clear, practical guidance.
+          <p style={{ fontSize: 13, color: BRAND.navy, lineHeight: 1.7, marginBottom: 20 }}>
+            Reach us by email, WhatsApp, or phone — we are here to help.
           </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-            <button className="btn-outline" onClick={() => setShowContactModal(false)}>Close</button>
-            <a href={'mailto:' + COMPANY_EMAIL + '?subject=' + encodeURIComponent('Astrus Insurance Enquiry')} className="btn-primary" style={{ textDecoration: 'none' }}
-              onClick={() => setShowContactModal(false)}>
-              <Send size={15} /> Email {COMPANY_EMAIL}
+
+          <div style={{ display: 'grid', gap: 10, marginBottom: 20, textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: BRAND.navy }}>
+              <MapPin size={15} style={{ marginTop: 2, flexShrink: 0, color: BRAND.navy }} />
+              <span>Abi Chaker Bldg, 4th Floor, Zouk Mosbeh, Lebanon</span>
+            </div>
+            <a href="tel:+9619211011" style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: BRAND.navy }}>
+              <Phone size={15} style={{ flexShrink: 0 }} /> +961 9 211 011
             </a>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <a href={'mailto:' + COMPANY_EMAIL + '?subject=' + encodeURIComponent('Astrus Insurance Enquiry')} className="btn-primary" style={{ textDecoration: 'none', width: '100%', justifyContent: 'center' }}
+              onClick={() => setShowContactModal(false)}>
+              <Send size={15} /> Email us
+            </a>
+            <a href="https://wa.me/9613252879" target="_blank" rel="noopener noreferrer" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              minHeight: 46, padding: '0 22px', borderRadius: 12, fontWeight: 600, fontSize: 14,
+              border: 'none', background: '#25D366', color: '#fff', cursor: 'pointer', textDecoration: 'none',
+              fontFamily: 'var(--font-body)', transition: 'all 0.2s',
+            }} onClick={() => setShowContactModal(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp us
+            </a>
+            <button className="btn-outline" onClick={() => setShowContactModal(false)} style={{ width: '100%' }}>Close</button>
           </div>
         </div>
       </Modal>
