@@ -40,7 +40,7 @@ const BRAND = {
   error: '#C0392B',
 };
 
-const COMPANY_EMAIL = 'info@astrusinsurance.com';
+const COMPANY_EMAIL = 'info@astrusinsurance.org';
 const COMPANY_NAME = 'Astrus Insurance Services';
 
 /* ── Insurance types ──────────────────────────────────── */
