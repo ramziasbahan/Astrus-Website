@@ -431,7 +431,6 @@ function RequestForm({ selectedType, onToast }) {
       if (!form.medicalClass) e.medicalClass = 'Required';
       if (form.medicalUserType === 'Company' && !form.employeesCount.trim()) e.employeesCount = 'Required';
       if (form.medicalUserType === 'Personal' && !form.personalAge.trim()) e.personalAge = 'Required';
-      if (medicalFiles.length === 0) e.medicalFiles = 'Please upload required documents';
     }
     if (form.type === 'property') {
       if (!form.propertyType.trim()) e.propertyType = 'Required';
@@ -600,7 +599,7 @@ function RequestForm({ selectedType, onToast }) {
       if (form.type === 'other') formData.append('Requirement', form.otherNeed);
       if (form.notes) formData.append('Notes', form.notes);
 
-      // Attach files
+      // Attach files (Formspree Pro supports attachments)
       var allFiles = [...uploadedFiles, ...medicalFiles];
       allFiles.forEach(function(file, idx) {
         formData.append('attachment' + (idx > 0 ? idx : ''), file);
@@ -755,9 +754,9 @@ function RequestForm({ selectedType, onToast }) {
                   </div>
                   <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
                     <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
-                    <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload employee list *</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload employee list</div>
                     <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Include names, dates of birth, dependents for each employee, and any previous health conditions.</div>
-                    <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word, Excel — Max 5MB per file</div>
+                    <div style={{ fontSize: 11, color: BRAND.navy, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word, Excel — Max 5MB per file</div>
                     <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.csv" id="medical-upload" style={{ display: 'none' }}
                       onChange={(e) => { validateAndAddFiles(e.target.files, setMedicalFiles); e.target.value = ''; }} />
                     <label htmlFor="medical-upload" className="btn-outline" style={{ cursor: 'pointer', fontSize: 12, minHeight: 36, padding: '0 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -803,9 +802,9 @@ function RequestForm({ selectedType, onToast }) {
                   </div>
                   <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
                     <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
-                    <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload ID documents *</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload ID documents</div>
                     <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Upload IDs for the principal applicant and all dependents.</div>
-                    <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG — Max 5MB per file</div>
+                    <div style={{ fontSize: 11, color: BRAND.navy, marginBottom: 12 }}>Accepted: PDF, JPG, PNG — Max 5MB per file</div>
                     <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" id="medical-id-upload" style={{ display: 'none' }}
                       onChange={(e) => { validateAndAddFiles(e.target.files, setMedicalFiles); e.target.value = ''; }} />
                     <label htmlFor="medical-id-upload" className="btn-outline" style={{ cursor: 'pointer', fontSize: 12, minHeight: 36, padding: '0 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -960,7 +959,7 @@ function RequestForm({ selectedType, onToast }) {
                 <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
                 <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload invoices & supporting documents</div>
                 <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Commercial invoices, packing lists, bills of lading, or other relevant documents.</div>
-                <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word — Max 5MB per file</div>
+                <div style={{ fontSize: 11, color: BRAND.navy, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word — Max 5MB per file</div>
                 <input
                   type="file"
                   multiple
