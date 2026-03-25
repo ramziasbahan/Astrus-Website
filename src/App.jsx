@@ -386,7 +386,7 @@ function FormField({ label, error, children }) {
   );
 }
 
-/* ════��═════════════════��════════════════════════════════
+/* ════  ═════════════════  ════════════════════════════════
    REQUEST FORM
    ═══════════════════════════════════════════════════════ */
 function RequestForm({ selectedType, onToast }) {
@@ -1289,7 +1289,7 @@ export default function App() {
           </div>
           <div className="section-container" style={{
             padding: '56px 24px',
-            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'start',
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 36, alignItems: 'start',
           }}>
             {/* Column 1: Logo + description */}
             <div>
