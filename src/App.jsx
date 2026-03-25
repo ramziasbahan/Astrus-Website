@@ -456,7 +456,7 @@ function RequestForm({ selectedType, onToast }) {
 
   const subject = useMemo(() => {
     const labels = Object.fromEntries(insuranceTypes.map((t) => [t.value, t.label]));
-    return 'Quotation Request — ' + (labels[form.type] || 'Insurance');
+    return 'Quotation Request - ' + (labels[form.type] || 'Insurance');
   }, [form.type]);
 
   const emailBody = useMemo(() => {
@@ -542,62 +542,71 @@ function RequestForm({ selectedType, onToast }) {
     try {
       const formData = new FormData();
       formData.append('_subject', subject);
-      formData.append('Full Name', form.fullName);
-      if (form.companyName) formData.append('Company', form.companyName);
-      if (form.phone) formData.append('Phone', form.phone);
-      formData.append('Email', form.email);
-      formData.append('Insurance Type', insuranceTypes.find(t => t.value === form.type)?.label || form.type);
+      formData.append('_replyto', form.email);
+      formData.append('full_name', form.fullName);
+      if (form.companyName) formData.append('company', form.companyName);
+      if (form.phone) formData.append('phone', form.phone);
+      formData.append('email', form.email);
+      formData.append('insurance_type', insuranceTypes.find(t => t.value === form.type)?.label || form.type);
 
       if (form.type === 'motor') {
-        formData.append('Vehicle', form.vehicleMakeModel);
-        formData.append('Year', form.year);
-        if (form.estimatedValue) formData.append('Value', form.estimatedValue);
-        if (form.usage) formData.append('Usage', form.usage);
+        formData.append('vehicle', form.vehicleMakeModel);
+        formData.append('year', form.year);
+        if (form.estimatedValue) formData.append('estimated_value', form.estimatedValue);
+        if (form.usage) formData.append('usage', form.usage);
       }
       if (form.type === 'medical') {
-        if (form.medicalUserType) formData.append('User Type', form.medicalUserType);
-        if (form.medicalClass) formData.append('Class', form.medicalClass);
+        if (form.medicalUserType) formData.append('user_type', form.medicalUserType);
+        if (form.medicalClass) formData.append('class', form.medicalClass);
         if (form.medicalUserType === 'Company') {
-          if (form.employeesCount) formData.append('Employees', form.employeesCount);
-          if (form.familyCoverage === 'yes' && form.totalDependents) formData.append('Total Dependents', form.totalDependents);
+          if (form.employeesCount) formData.append('employees', form.employeesCount);
+          if (form.familyCoverage === 'yes' && form.totalDependents) formData.append('total_dependents', form.totalDependents);
         }
         if (form.medicalUserType === 'Personal') {
-          if (form.personalAge) formData.append('Age', form.personalAge);
+          if (form.personalAge) formData.append('age', form.personalAge);
           if (form.familyCoverage === 'yes') {
-            if (form.numParents) formData.append('Parent Dependents', form.numParents);
-            if (form.numChildren) formData.append('Child Dependents', form.numChildren);
+            if (form.numParents) formData.append('parent_dependents', form.numParents);
+            if (form.numChildren) formData.append('child_dependents', form.numChildren);
           }
         }
-        if (form.familyCoverage) formData.append('Family Coverage', form.familyCoverage);
+        if (form.familyCoverage) formData.append('family_coverage', form.familyCoverage);
       }
       if (form.type === 'property') {
-        formData.append('Property Type', form.propertyType);
-        formData.append('Location', form.location);
-        if (form.buildArea) formData.append('Built Area', form.buildArea + ' sqm');
-        formData.append('Property Value (USD)', form.propertyValue);
-        if (form.contentsIncluded) formData.append('Contents Included', form.contentsIncluded);
-        if (form.contentsIncluded === 'yes' && form.contentsValue) formData.append('Contents Value (USD)', form.contentsValue);
+        formData.append('property_type', form.propertyType);
+        formData.append('location', form.location);
+        if (form.buildArea) formData.append('built_area', form.buildArea + ' sqm');
+        formData.append('property_value_usd', form.propertyValue);
+        if (form.contentsIncluded) formData.append('contents_included', form.contentsIncluded);
+        if (form.contentsIncluded === 'yes' && form.contentsValue) formData.append('contents_value_usd', form.contentsValue);
       }
       if (form.type === 'shipping') {
-        formData.append('Shipping Type', form.shippingSubtype);
-        formData.append('Cargo Contents', form.cargoType);
-        if (form.cargoType === 'Furniture' && form.furnitureBreakable) formData.append('Glass/Breakable', form.furnitureBreakable);
-        formData.append('Invoice Value', form.invoiceValue + ' ' + form.invoiceCurrency);
-        formData.append('Origin Country', form.originCountry);
-        var transitList = form.transitCountries.filter(function(c) { return c.country.trim(); }).map(function(c) { return c.country + (c.mode ? ' (' + c.mode + ')' : ''); }).join(', ');
-        if (transitList) formData.append('Transit Countries', transitList);
-        formData.append('Destination Country', form.destinationCountry);
+        formData.append('shipping_type', form.shippingSubtype);
+        formData.append('cargo_contents', form.cargoType);
+        if (form.cargoType === 'Furniture' && form.furnitureBreakable) formData.append('glass_breakable', form.furnitureBreakable);
+        formData.append('invoice_value', form.invoiceValue);
+        formData.append('invoice_currency', form.invoiceCurrency);
+        formData.append('origin_country', form.originCountry);
+        formData.append('destination_country', form.destinationCountry);
+        var transitText = '';
+        form.transitCountries.forEach(function(c, idx) {
+          if (c.country && c.country.trim()) {
+            if (transitText) transitText += ', ';
+            transitText += c.country.trim();
+            if (c.mode) transitText += ' via ' + c.mode;
+          }
+        });
+        if (transitText) formData.append('transit_countries', transitText);
       }
       if (form.type === 'workmen') {
-        formData.append('Project Type', form.projectType);
-        if (form.plotNumber) formData.append('Plot', form.plotNumber);
-        if (form.builtUpArea) formData.append('Area', form.builtUpArea + ' sqm');
-        formData.append('Workers', form.workersCount);
-        if (form.contractValue) formData.append('Contract Value', form.contractValue);
-        if (form.projectDuration) formData.append('Duration', form.projectDuration);
+        formData.append('project_type', form.projectType);
+        if (form.plotNumber) formData.append('plot', form.plotNumber);
+        if (form.builtUpArea) formData.append('area', form.builtUpArea + ' sqm');
+        formData.append('workers', form.workersCount);
+        if (form.contractValue) formData.append('contract_value', form.contractValue);
+        if (form.projectDuration) formData.append('duration', form.projectDuration);
       }
-      if (form.type === 'other') formData.append('Requirement', form.otherNeed);
-      if (form.notes) formData.append('Notes', form.notes);
+      if (form.type === 'other') formData.append('requirement', form.otherNeed);
+      if (form.notes) formData.append('notes', form.notes);
 
       // Attach files (Formspree Pro supports attachments)
       var allFiles = [...uploadedFiles, ...medicalFiles];
@@ -611,7 +620,9 @@ function RequestForm({ selectedType, onToast }) {
         headers: { 'Accept': 'application/json' },
       });
 
-      if (res.ok) {
+      var resData = await res.json();
+
+      if (res.ok && resData.ok !== false) {
         onToast('Your quotation request has been sent successfully!', 'success');
         // Reset form
         setForm({
@@ -628,7 +639,8 @@ function RequestForm({ selectedType, onToast }) {
         setUploadedFiles([]);
         setMedicalFiles([]);
       } else {
-        onToast('Something went wrong. Please try again or email us directly.', 'error');
+        var errMsg = (resData && resData.error) ? resData.error : 'Something went wrong. Please try again or email us directly.';
+        onToast(errMsg, 'error');
       }
     } catch (err) {
       onToast('Network error. Please check your connection and try again.', 'error');
