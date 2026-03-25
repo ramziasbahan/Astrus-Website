@@ -526,6 +526,8 @@ function RequestForm({ selectedType, onToast }) {
     return lines.filter(Boolean).join('\n');
   }, [form]);
 
+  const [isSending, setIsSending] = useState(false);
+
   const handleSubmit = () => {
     if (!validate()) {
       onToast('Please fill in the required fields.', 'error');
@@ -534,13 +536,121 @@ function RequestForm({ selectedType, onToast }) {
     setShowConfirm(true);
   };
 
-  const confirmAndSend = () => {
+  const confirmAndSend = async () => {
     setShowConfirm(false);
-    window.location.href = 'mailto:' + COMPANY_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(emailBody);
-    onToast('Your email app is opening — please press Send to submit your request!', 'success');
+    setIsSending(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('_subject', subject);
+      formData.append('Full Name', form.fullName);
+      if (form.companyName) formData.append('Company', form.companyName);
+      if (form.phone) formData.append('Phone', form.phone);
+      formData.append('Email', form.email);
+      formData.append('Insurance Type', insuranceTypes.find(t => t.value === form.type)?.label || form.type);
+
+      if (form.type === 'motor') {
+        formData.append('Vehicle', form.vehicleMakeModel);
+        formData.append('Year', form.year);
+        if (form.estimatedValue) formData.append('Value', form.estimatedValue);
+        if (form.usage) formData.append('Usage', form.usage);
+      }
+      if (form.type === 'medical') {
+        if (form.medicalUserType) formData.append('User Type', form.medicalUserType);
+        if (form.medicalClass) formData.append('Class', form.medicalClass);
+        if (form.medicalUserType === 'Company') {
+          if (form.employeesCount) formData.append('Employees', form.employeesCount);
+          if (form.familyCoverage === 'yes' && form.totalDependents) formData.append('Total Dependents', form.totalDependents);
+        }
+        if (form.medicalUserType === 'Personal') {
+          if (form.personalAge) formData.append('Age', form.personalAge);
+          if (form.familyCoverage === 'yes') {
+            if (form.numParents) formData.append('Parent Dependents', form.numParents);
+            if (form.numChildren) formData.append('Child Dependents', form.numChildren);
+          }
+        }
+        if (form.familyCoverage) formData.append('Family Coverage', form.familyCoverage);
+      }
+      if (form.type === 'property') {
+        formData.append('Property Type', form.propertyType);
+        formData.append('Location', form.location);
+        if (form.buildArea) formData.append('Built Area', form.buildArea + ' sqm');
+        formData.append('Property Value (USD)', form.propertyValue);
+        if (form.contentsIncluded) formData.append('Contents Included', form.contentsIncluded);
+        if (form.contentsIncluded === 'yes' && form.contentsValue) formData.append('Contents Value (USD)', form.contentsValue);
+      }
+      if (form.type === 'shipping') {
+        formData.append('Shipping Type', form.shippingSubtype);
+        formData.append('Cargo Contents', form.cargoType);
+        if (form.cargoType === 'Furniture' && form.furnitureBreakable) formData.append('Glass/Breakable', form.furnitureBreakable);
+        formData.append('Invoice Value', form.invoiceValue + ' ' + form.invoiceCurrency);
+        formData.append('Origin Country', form.originCountry);
+        var transitList = form.transitCountries.filter(function(c) { return c.country.trim(); }).map(function(c) { return c.country + (c.mode ? ' (' + c.mode + ')' : ''); }).join(', ');
+        if (transitList) formData.append('Transit Countries', transitList);
+        formData.append('Destination Country', form.destinationCountry);
+      }
+      if (form.type === 'workmen') {
+        formData.append('Project Type', form.projectType);
+        if (form.plotNumber) formData.append('Plot', form.plotNumber);
+        if (form.builtUpArea) formData.append('Area', form.builtUpArea + ' sqm');
+        formData.append('Workers', form.workersCount);
+        if (form.contractValue) formData.append('Contract Value', form.contractValue);
+        if (form.projectDuration) formData.append('Duration', form.projectDuration);
+      }
+      if (form.type === 'other') formData.append('Requirement', form.otherNeed);
+      if (form.notes) formData.append('Notes', form.notes);
+
+      // Attach files
+      var allFiles = [...uploadedFiles, ...medicalFiles];
+      allFiles.forEach(function(file, idx) {
+        formData.append('attachment' + (idx > 0 ? idx : ''), file);
+      });
+
+      var res = await fetch('https://formspree.io/f/mnjoalev', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' },
+      });
+
+      if (res.ok) {
+        onToast('Your quotation request has been sent successfully!', 'success');
+        // Reset form
+        setForm({
+          fullName: '', companyName: '', phone: '', email: '',
+          type: form.type, notes: '',
+          vehicleMakeModel: '', year: '', estimatedValue: '', usage: '',
+          medicalUserType: '', medicalClass: '', employeesCount: '', familyCoverage: '', totalDependents: '', personalAge: '', numParents: '', numChildren: '',
+          propertyType: '', location: '', buildArea: '', contentsIncluded: '', propertyValue: '', contentsValue: '',
+          shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ country: '', mode: '' }], destinationCountry: '',
+          plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
+          contractValue: '', projectDuration: '',
+          otherNeed: '',
+        });
+        setUploadedFiles([]);
+        setMedicalFiles([]);
+      } else {
+        onToast('Something went wrong. Please try again or email us directly.', 'error');
+      }
+    } catch (err) {
+      onToast('Network error. Please check your connection and try again.', 'error');
+    }
+
+    setIsSending(false);
   };
 
   const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 };
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const validateAndAddFiles = (files, setter) => {
+    var valid = [];
+    var rejected = [];
+    Array.from(files).forEach(function(f) {
+      if (f.size > MAX_FILE_SIZE) rejected.push(f.name);
+      else valid.push(f);
+    });
+    if (rejected.length > 0) onToast('File(s) too large (max 5MB): ' + rejected.join(', '), 'error');
+    if (valid.length > 0) setter(function(prev) { return [...prev, ...valid]; });
+  };
 
   return (
     <>
@@ -646,9 +756,10 @@ function RequestForm({ selectedType, onToast }) {
                   <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
                     <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
                     <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload employee list *</div>
-                    <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 12 }}>Include names, dates of birth, dependents for each employee, and any previous health conditions.</div>
+                    <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Include names, dates of birth, dependents for each employee, and any previous health conditions.</div>
+                    <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word, Excel — Max 5MB per file</div>
                     <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.csv" id="medical-upload" style={{ display: 'none' }}
-                      onChange={(e) => { setMedicalFiles((prev) => [...prev, ...Array.from(e.target.files)]); e.target.value = ''; }} />
+                      onChange={(e) => { validateAndAddFiles(e.target.files, setMedicalFiles); e.target.value = ''; }} />
                     <label htmlFor="medical-upload" className="btn-outline" style={{ cursor: 'pointer', fontSize: 12, minHeight: 36, padding: '0 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                       <Upload size={14} /> Choose files
                     </label>
@@ -693,9 +804,10 @@ function RequestForm({ selectedType, onToast }) {
                   <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
                     <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
                     <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload ID documents *</div>
-                    <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 12 }}>Upload IDs for the principal applicant and all dependents.</div>
+                    <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Upload IDs for the principal applicant and all dependents.</div>
+                    <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG — Max 5MB per file</div>
                     <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" id="medical-id-upload" style={{ display: 'none' }}
-                      onChange={(e) => { setMedicalFiles((prev) => [...prev, ...Array.from(e.target.files)]); e.target.value = ''; }} />
+                      onChange={(e) => { validateAndAddFiles(e.target.files, setMedicalFiles); e.target.value = ''; }} />
                     <label htmlFor="medical-id-upload" className="btn-outline" style={{ cursor: 'pointer', fontSize: 12, minHeight: 36, padding: '0 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                       <Upload size={14} /> Choose files
                     </label>
@@ -847,7 +959,8 @@ function RequestForm({ selectedType, onToast }) {
               <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
                 <Upload size={22} style={{ color: BRAND.navy, marginBottom: 8 }} />
                 <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.ink, marginBottom: 4 }}>Upload invoices & supporting documents</div>
-                <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 12 }}>PDF, JPG, PNG — max 10MB per file</div>
+                <div style={{ fontSize: 12, color: BRAND.navy, marginBottom: 4 }}>Commercial invoices, packing lists, bills of lading, or other relevant documents.</div>
+                <div style={{ fontSize: 11, color: BRAND.error, marginBottom: 12 }}>Accepted: PDF, JPG, PNG, Word — Max 5MB per file</div>
                 <input
                   type="file"
                   multiple
@@ -855,8 +968,7 @@ function RequestForm({ selectedType, onToast }) {
                   id="file-upload"
                   style={{ display: 'none' }}
                   onChange={(e) => {
-                    const files = Array.from(e.target.files);
-                    setUploadedFiles((prev) => [...prev, ...files]);
+                    validateAndAddFiles(e.target.files, setUploadedFiles);
                     e.target.value = '';
                   }}
                 />
@@ -923,8 +1035,8 @@ function RequestForm({ selectedType, onToast }) {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginTop: 24 }}>
-            <button className="btn-primary" onClick={handleSubmit}>
-              <Send size={15} /> Send quotation request
+            <button className="btn-primary" onClick={handleSubmit} disabled={isSending} style={isSending ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>
+              <Send size={15} /> {isSending ? 'Sending...' : 'Send quotation request'}
             </button>
             <span style={{ fontSize: 13, color: BRAND.navy }}>
               Your request goes to {COMPANY_EMAIL}
@@ -945,11 +1057,13 @@ function RequestForm({ selectedType, onToast }) {
             Ready to send?
           </h3>
           <p style={{ fontSize: 14, color: BRAND.navy, lineHeight: 1.7, marginBottom: 24 }}>
-            This will open your email app with your quotation details pre-filled. Just press <strong>Send</strong> in your email client.
+            Your quotation request and any attached documents will be sent directly to our team at <strong>{COMPANY_EMAIL}</strong>.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
             <button className="btn-outline" onClick={() => setShowConfirm(false)}>Go back</button>
-            <button className="btn-primary" onClick={confirmAndSend}><Mail size={15} /> Open email app</button>
+            <button className="btn-primary" onClick={confirmAndSend} disabled={isSending} style={isSending ? { opacity: 0.6, cursor: 'not-allowed' } : {}}>
+              <Send size={15} /> {isSending ? 'Sending...' : 'Send request'}
+            </button>
           </div>
         </div>
       </Modal>
