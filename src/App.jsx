@@ -645,6 +645,10 @@ function RequestForm({ selectedType, onToast }) {
 
       if (res.ok && resData.ok !== false) {
         onToast('Your quotation request has been sent successfully!', 'success');
+        // Fire Google Ads conversion
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'conversion', { 'send_to': 'AW-18040956827/Od0ACKbS7I8cEJvPzJpD' });
+        }
         // Reset form
         setForm({
           fullName: '', companyName: '', phone: '', email: '',
