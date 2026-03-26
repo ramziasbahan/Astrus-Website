@@ -19,6 +19,7 @@ import {
   AlertCircle,
   ArrowUp,
   Ship,
+  Plane,
   Plus,
   Trash2,
   Upload,
@@ -50,6 +51,7 @@ const insuranceTypes = [
   { value: 'medical', label: 'Medical Insurance', icon: HeartPulse, desc: 'Health & group cover' },
   { value: 'property', label: 'Property Insurance', icon: Building2, desc: 'Homes, offices, shops' },
   { value: 'shipping', label: 'Shipping Insurance', icon: Ship, desc: 'Land, air, sea cargo' },
+  { value: 'travel', label: 'Travel Insurance', icon: Plane, desc: 'Trips & travel cover' },
   { value: 'workmen', label: 'Workmen Insurance', icon: HardHat, desc: 'Construction & labor' },
   { value: 'other', label: 'Other Requests', icon: FileText, desc: 'Any insurance need' },
 ];
@@ -399,6 +401,7 @@ function RequestForm({ selectedType, onToast }) {
     shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ country: '', mode: '' }], destinationCountry: '',
     plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
     contractValue: '', projectDuration: '',
+    travelYearOfBirth: '', travelTripType: '', travelCoverageZone: '', travelDuration: '',
     otherNeed: '',
   });
 
@@ -447,6 +450,12 @@ function RequestForm({ selectedType, onToast }) {
     if (form.type === 'workmen') {
       if (!form.projectType.trim()) e.projectType = 'Required';
       if (!form.workersCount.trim()) e.workersCount = 'Required';
+    }
+    if (form.type === 'travel') {
+      if (!form.travelYearOfBirth.trim()) e.travelYearOfBirth = 'Required';
+      if (!form.travelTripType) e.travelTripType = 'Required';
+      if (!form.travelCoverageZone) e.travelCoverageZone = 'Required';
+      if (!form.travelDuration) e.travelDuration = 'Required';
     }
     if (form.type === 'other' && !form.otherNeed.trim()) e.otherNeed = 'Please describe your need';
 
@@ -518,6 +527,12 @@ function RequestForm({ selectedType, onToast }) {
       lines.push('Workers: ' + form.workersCount);
       if (form.contractValue) lines.push('Contract Value: ' + form.contractValue);
       if (form.projectDuration) lines.push('Duration: ' + form.projectDuration);
+    }
+    if (form.type === 'travel') {
+      lines.push('Year of Birth: ' + form.travelYearOfBirth);
+      if (form.travelTripType) lines.push('Trip Type: ' + form.travelTripType);
+      if (form.travelCoverageZone) lines.push('Coverage Zone: ' + form.travelCoverageZone);
+      if (form.travelDuration) lines.push('Duration: ' + form.travelDuration);
     }
     if (form.type === 'other') lines.push('Requirement: ' + form.otherNeed);
     if (form.notes) lines.push('', 'Notes: ' + form.notes);
@@ -605,6 +620,12 @@ function RequestForm({ selectedType, onToast }) {
         if (form.contractValue) formData.append('contract_value', form.contractValue);
         if (form.projectDuration) formData.append('duration', form.projectDuration);
       }
+      if (form.type === 'travel') {
+        formData.append('year_of_birth', form.travelYearOfBirth);
+        formData.append('trip_type', form.travelTripType);
+        formData.append('coverage_zone', form.travelCoverageZone);
+        formData.append('trip_duration', form.travelDuration);
+      }
       if (form.type === 'other') formData.append('requirement', form.otherNeed);
       if (form.notes) formData.append('notes', form.notes);
 
@@ -634,6 +655,7 @@ function RequestForm({ selectedType, onToast }) {
           shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ country: '', mode: '' }], destinationCountry: '',
           plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
           contractValue: '', projectDuration: '',
+          travelYearOfBirth: '', travelTripType: '', travelCoverageZone: '', travelDuration: '',
           otherNeed: '',
         });
         setUploadedFiles([]);
@@ -1005,6 +1027,41 @@ function RequestForm({ selectedType, onToast }) {
                   </div>
                 )}
               </div>
+            </motion.div>
+          )}
+
+          {form.type === 'travel' && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...gridStyle, marginTop: 18, overflow: 'hidden' }}>
+              <FormField label="Year of birth *" error={errors.travelYearOfBirth}>
+                <input className={errors.travelYearOfBirth ? 'error-field' : ''} value={form.travelYearOfBirth} onChange={(e) => onChange('travelYearOfBirth', e.target.value)} placeholder="e.g. 1990" />
+              </FormField>
+              <FormField label="Type of trip *" error={errors.travelTripType}>
+                <select className={errors.travelTripType ? 'error-field' : ''} value={form.travelTripType} onChange={(e) => onChange('travelTripType', e.target.value)}>
+                  <option value="">Select trip type</option>
+                  <option value="Multiple Entry">Multiple Entry</option>
+                  <option value="Consecutive Stay">Consecutive Stay</option>
+                </select>
+              </FormField>
+              <FormField label="Coverage zone plan *" error={errors.travelCoverageZone}>
+                <select className={errors.travelCoverageZone ? 'error-field' : ''} value={form.travelCoverageZone} onChange={(e) => onChange('travelCoverageZone', e.target.value)}>
+                  <option value="">Select coverage zone</option>
+                  <option value="Worldwide Platinum">Worldwide Platinum</option>
+                  <option value="Silver Plus Worldwide excl. US, CA, AU, JP">Silver Plus Worldwide excl. US, CA, AU, JP</option>
+                  <option value="Silver Worldwide excl. US, CA, AU, JP">Silver Worldwide excl. US, CA, AU, JP</option>
+                </select>
+              </FormField>
+              <FormField label="Trip duration *" error={errors.travelDuration}>
+                <select className={errors.travelDuration ? 'error-field' : ''} value={form.travelDuration} onChange={(e) => onChange('travelDuration', e.target.value)}>
+                  <option value="">Select duration</option>
+                  <option value="7 days">7 days</option>
+                  <option value="10 days">10 days</option>
+                  <option value="32 days">32 days</option>
+                  <option value="62 days">62 days</option>
+                  <option value="92 days">92 days</option>
+                  <option value="184 days">184 days</option>
+                  <option value="1 year">1 year</option>
+                </select>
+              </FormField>
             </motion.div>
           )}
 
@@ -1432,7 +1489,7 @@ export default function App() {
                 <MapPin size={18} style={{ color: BRAND.navy, marginTop: 2, flexShrink: 0 }} />
                 <div style={{ fontSize: 15, color: BRAND.navy, lineHeight: 1.65 }}>
                   Abi Chaker Building, 4th Floor<br />
-                  Zouk Mosbeh, Facing Espace 2000<br />
+                  Zouk Mikael, Facing Espace 2000<br />
                   Lebanon
                 </div>
               </div>
@@ -1481,7 +1538,7 @@ export default function App() {
           <div style={{ display: 'grid', gap: 10, marginBottom: 20, textAlign: 'left' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: BRAND.navy }}>
               <MapPin size={15} style={{ marginTop: 2, flexShrink: 0, color: BRAND.navy }} />
-              <span>Abi Chaker Bldg, 4th Floor, Zouk Mosbeh, Lebanon</span>
+              <span>Abi Chaker Bldg, 4th Floor, Zouk Mikael, Lebanon</span>
             </div>
             <a href="tel:+9619211011" style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: BRAND.navy }}>
               <Phone size={15} style={{ flexShrink: 0 }} /> +961 9 211 011
