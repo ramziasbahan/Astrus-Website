@@ -398,7 +398,7 @@ function RequestForm({ selectedType, onToast }) {
     vehicleMakeModel: '', year: '', estimatedValue: '', usage: '',
     medicalUserType: '', medicalClass: '', employeesCount: '', familyCoverage: '', totalDependents: '', personalAge: '', numParents: '', numChildren: '',
     propertyType: '', location: '', buildArea: '', contentsIncluded: '', propertyValue: '', contentsValue: '',
-    shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ country: '', mode: '' }], destinationCountry: '',
+    shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ from: '', to: '', mode: '' }], destinationCountry: '', shippingCoverage: '', optionalCoverages: [],
     plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
     contractValue: '', projectDuration: '',
     travelYearOfBirth: '', travelTripType: '', travelCoverageZone: '', travelDuration: '',
@@ -446,6 +446,11 @@ function RequestForm({ selectedType, onToast }) {
       if (!form.invoiceValue.trim()) e.invoiceValue = 'Required';
       if (!form.originCountry.trim()) e.originCountry = 'Required';
       if (!form.destinationCountry.trim()) e.destinationCountry = 'Required';
+      if (form.shippingSubtype && form.shippingSubtype !== 'Multimodal' && !form.shippingCoverage) e.shippingCoverage = 'Required';
+      if (form.shippingSubtype === 'Multimodal') {
+        var hasLeg = form.transitCountries.some(function(c) { return c.to && c.to.trim() && c.mode; });
+        if (!hasLeg) e.transitRoutes = 'At least one transit leg is required';
+      }
     }
     if (form.type === 'workmen') {
       if (!form.projectType.trim()) e.projectType = 'Required';
@@ -515,10 +520,17 @@ function RequestForm({ selectedType, onToast }) {
       if (form.cargoType === 'Furniture' && form.furnitureBreakable) lines.push('Glass/Breakable Items: ' + form.furnitureBreakable);
       lines.push('Invoice Value: ' + form.invoiceValue + ' ' + form.invoiceCurrency);
       lines.push('Origin Country: ' + form.originCountry);
-      var transitList = form.transitCountries.filter(function(c) { return c.country.trim(); }).map(function(c) { return c.country + (c.mode ? ' (' + c.mode + ')' : ''); }).join(', ');
-      if (transitList) lines.push('Transit Countries: ' + transitList);
+      if (form.shippingSubtype === 'Multimodal') {
+        form.transitCountries.forEach(function(leg, idx) {
+          if (leg.to && leg.to.trim()) {
+            lines.push('Leg ' + (idx + 1) + ': ' + (leg.from || form.originCountry) + ' to ' + leg.to + ' via ' + (leg.mode || 'TBD'));
+          }
+        });
+      }
       lines.push('Destination Country: ' + form.destinationCountry);
-      if (uploadedFiles.length > 0) lines.push('Attachments: ' + uploadedFiles.length + ' file(s) — please request via email');
+      if (form.shippingCoverage) lines.push('Coverage Level: ' + form.shippingCoverage);
+      if (form.optionalCoverages && form.optionalCoverages.length > 0) lines.push('Optional Coverages: ' + form.optionalCoverages.join(', '));
+      if (uploadedFiles.length > 0) lines.push('Attachments: ' + uploadedFiles.length + ' file(s)');
     }
     if (form.type === 'workmen') {
       lines.push('Project Type: ' + form.projectType);
@@ -602,15 +614,25 @@ function RequestForm({ selectedType, onToast }) {
         formData.append('invoice_currency', form.invoiceCurrency);
         formData.append('origin_country', form.originCountry);
         formData.append('destination_country', form.destinationCountry);
-        var transitText = '';
-        form.transitCountries.forEach(function(c, idx) {
-          if (c.country && c.country.trim()) {
-            if (transitText) transitText += ', ';
-            transitText += c.country.trim();
-            if (c.mode) transitText += ' via ' + c.mode;
-          }
-        });
-        if (transitText) formData.append('transit_countries', transitText);
+        if (form.shippingSubtype === 'Multimodal') {
+          var legs = [];
+          form.transitCountries.forEach(function(leg, idx) {
+            if (leg.to && leg.to.trim()) {
+              legs.push((leg.from || form.originCountry) + ' to ' + leg.to + ' via ' + (leg.mode || 'TBD'));
+            }
+          });
+          if (legs.length > 0) formData.append('transit_route', legs.join(', '));
+          // Collect all modes used for multimodal coverage info
+          var allModes = form.transitCountries.map(function(l) { return l.mode; }).filter(Boolean);
+          var coverages = [];
+          form.transitCountries.forEach(function(leg) {
+            if (leg.coverage) coverages.push(leg.mode + ': ' + leg.coverage);
+          });
+          if (coverages.length > 0) formData.append('coverage_levels', coverages.join(', '));
+        } else {
+          if (form.shippingCoverage) formData.append('coverage_level', form.shippingCoverage);
+        }
+        if (form.optionalCoverages && form.optionalCoverages.length > 0) formData.append('optional_coverages', form.optionalCoverages.join(', '));
       }
       if (form.type === 'workmen') {
         formData.append('project_type', form.projectType);
@@ -656,7 +678,7 @@ function RequestForm({ selectedType, onToast }) {
           vehicleMakeModel: '', year: '', estimatedValue: '', usage: '',
           medicalUserType: '', medicalClass: '', employeesCount: '', familyCoverage: '', totalDependents: '', personalAge: '', numParents: '', numChildren: '',
           propertyType: '', location: '', buildArea: '', contentsIncluded: '', propertyValue: '', contentsValue: '',
-          shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ country: '', mode: '' }], destinationCountry: '',
+          shippingSubtype: '', cargoType: '', furnitureBreakable: '', invoiceValue: '', invoiceCurrency: 'USD', originCountry: '', transitCountries: [{ from: '', to: '', mode: '' }], destinationCountry: '', shippingCoverage: '', optionalCoverages: [],
           plotNumber: '', builtUpArea: '', projectType: '', workersCount: '',
           contractValue: '', projectDuration: '',
           travelYearOfBirth: '', travelTripType: '', travelCoverageZone: '', travelDuration: '',
@@ -897,11 +919,16 @@ function RequestForm({ selectedType, onToast }) {
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ marginTop: 18, overflow: 'hidden' }}>
               <div style={gridStyle}>
                 <FormField label="Shipping type *" error={errors.shippingSubtype}>
-                  <select className={errors.shippingSubtype ? 'error-field' : ''} value={form.shippingSubtype} onChange={(e) => onChange('shippingSubtype', e.target.value)}>
+                  <select className={errors.shippingSubtype ? 'error-field' : ''} value={form.shippingSubtype} onChange={(e) => {
+                    onChange('shippingSubtype', e.target.value);
+                    onChange('shippingCoverage', '');
+                    setForm((prev) => ({ ...prev, transitCountries: [{ from: '', to: '', mode: '' }], optionalCoverages: [] }));
+                  }}>
                     <option value="">Select type</option>
                     <option value="Land">Land</option>
                     <option value="Air">Air</option>
                     <option value="Sea">Sea</option>
+                    <option value="Multimodal">Multimodal</option>
                   </select>
                 </FormField>
                 <FormField label="Cargo contents *" error={errors.cargoType}>
@@ -944,53 +971,154 @@ function RequestForm({ selectedType, onToast }) {
                 </FormField>
               </div>
 
-              <div style={{ marginTop: 14 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>Transit countries & shipping mode</label>
-                {form.transitCountries.map((tc, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-                    <input
-                      value={tc.country}
-                      onChange={(e) => {
-                        const updated = [...form.transitCountries];
-                        updated[idx] = { ...updated[idx], country: e.target.value };
-                        setForm((prev) => ({ ...prev, transitCountries: updated }));
-                      }}
-                      placeholder={'Transit country ' + (idx + 1)}
-                      style={{ flex: 1 }}
-                    />
-                    <select
-                      value={tc.mode}
-                      onChange={(e) => {
-                        const updated = [...form.transitCountries];
-                        updated[idx] = { ...updated[idx], mode: e.target.value };
-                        setForm((prev) => ({ ...prev, transitCountries: updated }));
-                      }}
-                      style={{ width: 120, flexShrink: 0 }}
-                    >
-                      <option value="">Mode</option>
-                      <option value="Land">Land</option>
-                      <option value="Air">Air</option>
-                      <option value="Sea">Sea</option>
-                    </select>
-                    {form.transitCountries.length > 1 && (
-                      <button type="button" onClick={() => {
-                        const updated = form.transitCountries.filter((_, i) => i !== idx);
-                        setForm((prev) => ({ ...prev, transitCountries: updated }));
-                      }} style={{
-                        width: 36, height: 36, borderRadius: 8, border: '1px solid ' + BRAND.border,
-                        background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: BRAND.error, flexShrink: 0,
-                      }}>
-                        <Trash2 size={14} />
-                      </button>
-                    )}
+              {/* Coverage level for non-multimodal */}
+              {form.shippingSubtype && form.shippingSubtype !== 'Multimodal' && (
+                <div style={{ marginTop: 14 }}>
+                  <div style={gridStyle}>
+                    <FormField label="Coverage level *" error={errors.shippingCoverage}>
+                      <select className={errors.shippingCoverage ? 'error-field' : ''} value={form.shippingCoverage} onChange={(e) => onChange('shippingCoverage', e.target.value)}>
+                        <option value="">Select coverage</option>
+                        {form.shippingSubtype === 'Sea' && (
+                          <>
+                            <option value="ICC (A)">ICC (A)</option>
+                            <option value="ICC (B)">ICC (B)</option>
+                            <option value="ICC (C)">ICC (C)</option>
+                          </>
+                        )}
+                        {form.shippingSubtype === 'Air' && (
+                          <>
+                            <option value="ICC (Air)">ICC (Air)</option>
+                            <option value="Total Loss Only (TLO)">Total Loss Only (TLO)</option>
+                          </>
+                        )}
+                        {form.shippingSubtype === 'Land' && (
+                          <>
+                            <option value="All Risk (Road / Rail)">All Risk (Road / Rail)</option>
+                            <option value="Accident Only">Accident Only</option>
+                          </>
+                        )}
+                      </select>
+                    </FormField>
                   </div>
-                ))}
-                <button type="button" onClick={() => {
-                  setForm((prev) => ({ ...prev, transitCountries: [...prev.transitCountries, { country: '', mode: '' }] }));
-                }} className="btn-outline" style={{ fontSize: 12, minHeight: 34, padding: '0 14px', marginTop: 4 }}>
-                  <Plus size={14} /> Add transit country
-                </button>
+                </div>
+              )}
+
+              {/* Multimodal transit legs */}
+              {form.shippingSubtype === 'Multimodal' && (
+                <div style={{ marginTop: 14 }}>
+                  <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: BRAND.ink }}>Transit route & coverage {errors.transitRoutes && <span style={{ color: BRAND.error, fontWeight: 400 }}> — {errors.transitRoutes}</span>}</label>
+                  {form.transitCountries.map((leg, idx) => {
+                    var fromCountry = idx === 0 ? form.originCountry : (form.transitCountries[idx - 1].to || '');
+                    return (
+                      <div key={idx} style={{ padding: 14, marginBottom: 10, borderRadius: 12, border: '1px solid ' + BRAND.border, background: BRAND.soft }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: BRAND.navy, marginBottom: 8 }}>Leg {idx + 1}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}>
+                          <FormField label="From">
+                            <input value={fromCountry} disabled style={{ background: '#eee', color: BRAND.navy }} placeholder="Auto-filled" />
+                          </FormField>
+                          <FormField label="To *">
+                            <input value={leg.to} onChange={(e) => {
+                              var updated = [...form.transitCountries];
+                              updated[idx] = { ...updated[idx], to: e.target.value, from: fromCountry };
+                              setForm(function(prev) { return { ...prev, transitCountries: updated }; });
+                            }} placeholder="Transit country" />
+                          </FormField>
+                          <FormField label="Mode *">
+                            <select value={leg.mode} onChange={(e) => {
+                              var updated = [...form.transitCountries];
+                              updated[idx] = { ...updated[idx], mode: e.target.value, coverage: '' };
+                              setForm(function(prev) { return { ...prev, transitCountries: updated }; });
+                            }}>
+                              <option value="">Select</option>
+                              <option value="Land">Land</option>
+                              <option value="Air">Air</option>
+                              <option value="Sea">Sea</option>
+                            </select>
+                          </FormField>
+                          {leg.mode && (
+                            <FormField label="Coverage *">
+                              <select value={leg.coverage || ''} onChange={(e) => {
+                                var updated = [...form.transitCountries];
+                                updated[idx] = { ...updated[idx], coverage: e.target.value };
+                                setForm(function(prev) { return { ...prev, transitCountries: updated }; });
+                              }}>
+                                <option value="">Select</option>
+                                {leg.mode === 'Sea' && (
+                                  <>
+                                    <option value="ICC (A)">ICC (A)</option>
+                                    <option value="ICC (B)">ICC (B)</option>
+                                    <option value="ICC (C)">ICC (C)</option>
+                                  </>
+                                )}
+                                {leg.mode === 'Air' && (
+                                  <>
+                                    <option value="ICC (Air)">ICC (Air)</option>
+                                    <option value="Total Loss Only (TLO)">Total Loss Only (TLO)</option>
+                                  </>
+                                )}
+                                {leg.mode === 'Land' && (
+                                  <>
+                                    <option value="All Risk (Road / Rail)">All Risk (Road / Rail)</option>
+                                    <option value="Accident Only">Accident Only</option>
+                                  </>
+                                )}
+                              </select>
+                            </FormField>
+                          )}
+                        </div>
+                        {form.transitCountries.length > 1 && (
+                          <button type="button" onClick={() => {
+                            setForm(function(prev) { return { ...prev, transitCountries: prev.transitCountries.filter(function(_, i) { return i !== idx; }) }; });
+                          }} style={{ marginTop: 8, background: 'none', border: 'none', cursor: 'pointer', color: BRAND.error, fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Trash2 size={13} /> Remove leg
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <button type="button" onClick={() => {
+                    var lastTo = form.transitCountries.length > 0 ? form.transitCountries[form.transitCountries.length - 1].to : '';
+                    setForm(function(prev) { return { ...prev, transitCountries: [...prev.transitCountries, { from: lastTo, to: '', mode: '', coverage: '' }] }; });
+                  }} className="btn-outline" style={{ fontSize: 12, minHeight: 34, padding: '0 14px', marginTop: 4 }}>
+                    <Plus size={14} /> Add another leg
+                  </button>
+                </div>
+              )}
+
+              {/* Optional coverages */}
+              <div style={{ marginTop: 14 }}>
+                <div style={gridStyle}>
+                  <FormField label="Optional coverages">
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+                      {['War Risk', 'SRCC', 'Refrigeration / Chiller Clause', 'None'].map(function(opt) {
+                        var isSelected = form.optionalCoverages.includes(opt);
+                        if (opt === 'None' && form.optionalCoverages.length > 0 && !form.optionalCoverages.includes('None')) {
+                          isSelected = false;
+                        }
+                        return (
+                          <button key={opt} type="button" onClick={() => {
+                            setForm(function(prev) {
+                              var current = prev.optionalCoverages || [];
+                              if (opt === 'None') return { ...prev, optionalCoverages: current.includes('None') ? [] : ['None'] };
+                              var without = current.filter(function(c) { return c !== 'None'; });
+                              if (current.includes(opt)) return { ...prev, optionalCoverages: without.filter(function(c) { return c !== opt; }) };
+                              return { ...prev, optionalCoverages: [...without, opt] };
+                            });
+                          }} style={{
+                            padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+                            border: isSelected ? '1.5px solid ' + BRAND.ink : '1.5px solid ' + BRAND.border,
+                            background: isSelected ? BRAND.ink : '#fff',
+                            color: isSelected ? '#fff' : BRAND.ink,
+                            cursor: 'pointer', transition: 'all 0.15s',
+                            fontFamily: 'var(--font-body)',
+                          }}>
+                            {opt}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </FormField>
+                </div>
               </div>
 
               <div style={{ marginTop: 16, padding: 18, borderRadius: 14, border: '1.5px dashed ' + BRAND.border, background: BRAND.soft, textAlign: 'center' }}>
